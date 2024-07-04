@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB_9 Three.js - Kontury</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <p style="text-align: center;">Wariant 11 - Pionek</p>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff); // Set background to white
+        renderer.shadowMap.enabled = true; // Enable shadow maps
+        document.body.appendChild(renderer.domElement);
+
+        // Add lighting
+        const light1 = new THREE.DirectionalLight(0xffffff, 1.5);
+        light1.position.set(5, 10, 7.5);
+        light1.castShadow = true; // Enable shadows for this light
+        scene.add(light1);
+
+        const light2 = new THREE.DirectionalLight(0xffffff, 1.5);
+        light2.position.set(-5, 10, -7.5);
+        light2.castShadow = true; // Enable shadows for this light
+        scene.add(light2);
+
+        const ambientLight = new THREE.AmbientLight(0x606060);
+        scene.add(ambientLight);
+
+        // Add point lights for more dynamic shadows
+        const pointLight1 = new THREE.PointLight(0xffffff, 0.5);
+        pointLight1.position.set(10, 5, 10);
+        pointLight1.castShadow = true;
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xffffff, 0.5);
+        pointLight2.position.set(-10, 5, -10);
+        pointLight2.castShadow = true;
+        scene.add(pointLight2);
+
+        // Create white material for pawn
+        const whiteMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+
+        // Create base of the pawn
+        const base1 = new THREE.Mesh(
+            new THREE.CylinderGeometry(1, 0.7, 0.1, 90),
+            whiteMaterial
+        );
+        base1.castShadow = true;
+        base1.receiveShadow = true;
+
+        const base2 = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.9, 0.9, 0.2, 90),
+            whiteMaterial
+        );
+        base2.position.y = 0.15;
+        base2.castShadow = true;
+        base2.receiveShadow = true;
+
+        let allBase = new THREE.Group();
+        allBase.add(base1);
+        allBase.add(base2);
+
+        // Create body parts of the pawn
+        const part1 = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.5, 0.7, 1.2, 32),
+            whiteMaterial
+        );
+        part1.position.y = 0.9;
+        part1.castShadow = true;
+        part1.receiveShadow = true;
+        allBase.add(part1);
+
+        const part2 = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.6, 0.5, 0.3, 32),
+            whiteMaterial
+        );
+        part2.position.y = 1.8;
+        part2.castShadow = true;
+        part2.receiveShadow = true;
+        allBase.add(part2);
+
+        const part3 = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.4, 0.6, 0.6, 32),
+            whiteMaterial
+        );
+        part3.position.y = 2.2;
+        part3.castShadow = true;
+        part3.receiveShadow = true;
+        allBase.add(part3);
+
+        // Create the head of the pawn
+        const headGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+        const head = new THREE.Mesh(headGeometry, whiteMaterial);
+        head.position.set(0, 2.9, 0);
+        head.castShadow = true;
+        head.receiveShadow = true;
+        allBase.add(head);
+
+        allBase.position.set(0, -1.5, 0);
+        scene.add(allBase);
+
+        // Create the ground plane for shadow reception
+        const groundGeometry = new THREE.PlaneGeometry(50, 50);
+        const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.5 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -1.5;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Set camera position and zoom to make the pawn occupy the whole screen
+        camera.position.set(0, 1, 5);
+        camera.lookAt(new THREE.Vector3(0, 1, 0));
+
+        // Render loop
+        function render() {
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+
+        render();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
